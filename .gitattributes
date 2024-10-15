@@ -1,0 +1,2 @@
+files/edges.h5 filter=lfs diff=lfs merge=lfs -text
+files/nodes.h5 filter=lfs diff=lfs merge=lfs -text
