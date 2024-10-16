@@ -1,7 +1,7 @@
 from libsonata import NodeStorage, EdgeStorage
 from pathlib import Path
 
-DATA_DIR = Path(__file__).parent.absolute() / "files"
+DATA_DIR = Path(__file__).parent.parent.absolute() / "files"
 
 
 def test_nodes_file():
