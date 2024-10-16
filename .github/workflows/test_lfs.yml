@@ -1,0 +1,53 @@
+name: neurodamus build and test
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  simulation:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-22.04]
+        python-version: ['3.12.6']
+    steps:
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ github.event.pull_request.head.sha }}
+        fetch-depth: 0
+        lfs: true
+
+    - name: Upgrade pip and install base Python packages
+      run: |
+        python -m venv venv
+        . ./venv/bin/activate
+        python -m pip install --upgrade pip setuptools
+
+    - name: Add virtual environment to PATH
+      run: echo "${{ github.workspace }}/venv/bin" >> $GITHUB_PATH
+
+    - name: Install libsonata
+      run: |
+        pip install libsonata
+
+    - name: test-unit
+      run: |
+        pip install pytest
+        pytest tests/test_read_lfs.py
+
+    - name: live debug session, comment out
+      if: failure()
+      uses: mxschmitt/action-tmate@v3
+      with:
+       timeout-minutes: 60  # or any other value you need
