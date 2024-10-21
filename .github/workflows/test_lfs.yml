@@ -26,7 +26,20 @@ jobs:
       with:
         ref: ${{ github.event.pull_request.head.sha }}
         fetch-depth: 0
-        lfs: true
+
+    - name: Cache data
+      id: cache-data
+      uses: actions/cache@v3
+      env:
+        cache-name: cache-data
+      with:
+        path: files
+        key: data_files
+
+    - name: lfs pull
+      if: steps.cache-data.outputs.cache-hit != 'true'
+      run: |
+        git lfs pull
 
     - name: Upgrade pip and install base Python packages
       run: |
